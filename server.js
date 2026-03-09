@@ -10,10 +10,10 @@ app.use(express.urlencoded({ extended: true }));
 let reviews = [];
 
 app.post('/submit-review', (req, res) => {
-    const { username, rating, review } = req.body;
+    const { username, movieId, rating, review } = req.body;
 
-    if (!username || rating === undefined || rating === null || !review) {
-        return res.status(400).send('Please provide username, rating, and review.');
+    if (!username || !movieId || rating === undefined || rating === null || !review) {
+        return res.status(400).send('Please provide username, movie ID, rating, and review.');
     }
 
     if (review.length > 300) {
@@ -24,12 +24,18 @@ app.post('/submit-review', (req, res) => {
          return res.status(400).send('Rating must be a number between 0 and 5.');
     }
 
-    reviews.push({ username, rating: parseFloat(rating), review });
+    reviews.push({ username, movieId, rating: parseFloat(rating), review });
     res.status(200).send('Review submitted successfully!');
 });
 
 app.get('/reviews', (req, res) => {
-    res.json(reviews);
+    const { movieId } = req.query;
+    if (movieId) {
+        const filteredReviews = reviews.filter(r => r.movieId === movieId);
+        res.json(filteredReviews);
+    } else {
+        res.json(reviews);
+    }
 });
 
 app.listen(port, () => {

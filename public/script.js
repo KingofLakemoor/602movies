@@ -13,6 +13,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const fetchReviews = async () => {
         try {
+            // Here we could filter by movieId if we wanted to only show the current movie's reviews,
+            // but for now we'll fetch all and display the Movie ID to show they are grouped/stored.
             const response = await fetch('/reviews');
             const data = await response.json();
 
@@ -44,7 +46,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 const usernameSpan = document.createElement('span');
                 usernameSpan.classList.add('review-username');
-                usernameSpan.textContent = review.username;
+                // Display username and movie ID
+                usernameSpan.textContent = `${review.username} (Movie: ${review.movieId})`;
 
                 const ratingSpan = document.createElement('span');
                 ratingSpan.classList.add('review-rating');
@@ -76,6 +79,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const formData = new FormData(form);
         const data = {
             username: formData.get('username'),
+            movieId: formData.get('movieId'),
             rating: formData.get('rating') ? parseFloat(formData.get('rating')) : 0,
             review: formData.get('review')
         };
